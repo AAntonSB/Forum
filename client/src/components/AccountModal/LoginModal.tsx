@@ -60,7 +60,6 @@ const LoginModal: FC<LoginModalProps> = ({setModalMode, setOpen}) => {
 
   if (data === "Succesfully authenticated") {
     setOpen(false)
-    
   }
 
   return (

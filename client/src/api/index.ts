@@ -11,7 +11,8 @@ const userRequests = {
   login: (payload: User) => api.post("/login", payload),
   get: (id: string) => api.get<UserPayload>(`/user/${id}`),
   delete: (id: string) => api.delete(`/user/${id}`),
-  getAll: () => api.get("/users")
+  getAll: () => api.get("/users"),
+  loggedInUser: () => api.get("user")
 }
 
 export default userRequests

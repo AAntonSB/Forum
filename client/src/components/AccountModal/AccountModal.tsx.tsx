@@ -5,10 +5,6 @@ import LoginModal from './LoginModal'
 import RegisterModal from './RegisterModal'
 import classes from '*.module.css'
 
-interface AccountProps {
-  mode?: string;
-}
-
 const useStyles = makeStyles(() => ({
   backdrop: {
     zIndex: 3000
@@ -37,7 +33,8 @@ const useStyles = makeStyles(() => ({
   }
 }))
 
-const AccountModal: FC<AccountProps> = () => {
+
+const AccountModal: FC = () => {
   const classes = useStyles();
   const [open, setOpen] = useState<boolean>(false)
   const [modalMode, setModalMode] = useState<string>("login")

@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC,} from 'react';
 import { CssBaseline } from "@material-ui/core";
 import { hot } from "react-hot-loader/root";
 import {Route, Switch} from 'react-router-dom'
@@ -10,11 +10,13 @@ import Post from './components/Post'
 import UserList from './components/UserList'
 
 const App: FC = () => {
+
+
   return (
     <div>
       <CssBaseline />
       <Header />
-            <Switch>
+      <Switch>
         <Route exact path="/"> <ForumSelector /> </Route>
         <Route exact path="/советов/:name"> <Board /> </Route>
         <Route path="/советов/:name/:id"><Post /></Route>

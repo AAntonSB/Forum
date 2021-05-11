@@ -4,6 +4,10 @@ const passport = require("passport");
 require("../passportConfig")(passport);
 
 module.exports = {
+  loggedInUser: function (req, res) {
+    res.send(req.user);
+  },
+
   registerUser: async function (req, res) {
     const body = req.body;
 
