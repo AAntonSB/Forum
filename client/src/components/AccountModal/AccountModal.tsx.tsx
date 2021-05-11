@@ -47,7 +47,7 @@ const AccountModal: FC<AccountProps> = () => {
         <div className={classes.dissmissable} onClick={() => setOpen(false)} />
         <div className={classes.accountContainer}>
           {modalMode === "login" ?
-            <LoginModal setModalMode={setModalMode} /> :
+            <LoginModal setOpen={setOpen} setModalMode={setModalMode} /> :
             <RegisterModal setModalMode={setModalMode}/> }
         </div>
       </Backdrop>

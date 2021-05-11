@@ -1,4 +1,4 @@
-import React, { FC, useState, MouseEvent, ChangeEvent } from 'react'
+import React, { FC, useState, MouseEvent, ChangeEvent, VoidFunctionComponent } from 'react'
 import { Input, Button, FormControl, InputLabel, InputAdornment, IconButton, Typography } from '@material-ui/core'
 import {Link} from 'react-router-dom'
 import Visibility from '@material-ui/icons/Visibility'
@@ -7,6 +7,7 @@ import { makeStyles } from '@material-ui/styles'
 import userRequests from '../../api'
 import crumbledPaper from '../../images/crumbledPaper.jpg'
 import { updateShorthandPropertyAssignment } from 'typescript'
+import { SettingsInputComponentTwoTone } from '@material-ui/icons'
 
 const useStyles = makeStyles(() => ({
     loginContainer: {
@@ -29,9 +30,10 @@ interface State {
 
 interface LoginModalProps {
   setModalMode: (mode: string) => void;
+  setOpen: (open: boolean) => void;
 }
 
-const LoginModal: FC<LoginModalProps> = ({setModalMode}) => {
+const LoginModal: FC<LoginModalProps> = ({setModalMode, setOpen}) => {
   const classes = useStyles()
     const [values, setValues] = useState<State>({
     username: '',
@@ -55,6 +57,11 @@ const LoginModal: FC<LoginModalProps> = ({setModalMode}) => {
     const handleMouseDownPassword = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
+
+  if (data === "Succesfully authenticated") {
+    setOpen(false)
+    
+  }
 
   return (
     <div className={classes.loginContainer}>
