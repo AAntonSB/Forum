@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const { genUUID } = require("./helperFunctions");
+const { genUUID } = require("../helperFunctions");
 
 const User = new Schema(
   {
