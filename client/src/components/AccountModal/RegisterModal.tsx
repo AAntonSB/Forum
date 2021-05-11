@@ -4,6 +4,7 @@ import {Link} from 'react-router-dom'
 import Visibility from '@material-ui/icons/Visibility'
 import VisibilityOff from '@material-ui/icons/VisibilityOff'
 import { makeStyles } from '@material-ui/styles'
+import userRequests from '../../api'
 import crumbledPaper from '../../images/crumbledPaper.jpg'
 
 const useStyles = makeStyles(() => ({
@@ -51,6 +52,10 @@ const RegisterModal: FC<RegisterModalProps> = ({setModalMode}) => {
     email: "",
     showPassword: false
   })
+
+  const register = () => {
+    userRequests.register({username: values.username, password: values.password}).then((res) => console.log(res))
+  }
 
   const handleChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [prop]: event.target.value });
@@ -128,7 +133,7 @@ const RegisterModal: FC<RegisterModalProps> = ({setModalMode}) => {
             }/>
       </FormControl>
       <div  className={classes.loginPage}>
-        <Button className={classes.registerMenuButton}>регистр</Button>
+        <Button onClick={() => register()} className={classes.registerMenuButton}>регистр</Button>
         <Button onClick={ () => setModalMode("login")} className={classes.registerMenuLink}>Войти</Button>
       </div>
     </div>

@@ -1,7 +1,10 @@
 const User = require("../models/user-model");
+const bcrypt = require("bcryptjs");
+const passport = require("passport");
+require("../passportConfig")(passport);
 
 module.exports = {
-  registerUser: function (req, res) {
+  registerUser: async function (req, res) {
     const body = req.body;
 
     if (!body) {
@@ -11,27 +14,52 @@ module.exports = {
       });
     }
 
-    const user = new User(body);
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(body.password, salt);
+    body.salt = salt;
+    body.password = hashedPassword;
 
-    if (!user) {
-      return res.status(400).json({ success: false, error: err });
-    }
+    User.findOne({ username: body.username }, (err, doc) => {
+      if (err) throw err;
+      if (doc) return res.send("user already exists");
 
-    user
-      .save()
-      .then(() => {
-        return res.status(201).json({
-          sucess: true,
-          id: user.id,
-          message: "User created",
+      console.log(body);
+
+      const user = new User(body);
+
+      if (!user) {
+        return res.status(400).json({ success: false, error: err });
+      }
+
+      user
+        .save()
+        .then(() => {
+          return res.status(201).json({
+            sucess: true,
+            id: user.id,
+            message: "User created",
+          });
+        })
+        .catch((error) => {
+          return res.status(400).json({
+            error,
+            message: "User not created",
+          });
         });
-      })
-      .catch((error) => {
-        return res.status(400).json({
-          error,
-          message: "User not created",
+    });
+  },
+
+  loginUser: function (req, res, next) {
+    passport.authenticate("local", (err, user, info) => {
+      if (err) throw err;
+      if (!user) res.send("User dosen't exist");
+      else {
+        req.logIn(user, (err) => {
+          if (err) throw err;
+          res.send("Succesfully authenticated");
         });
-      });
+      }
+    })(req, res, next);
   },
 
   deleteUser: async function (req, res) {

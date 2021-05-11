@@ -1,10 +1,12 @@
 import React, { FC, useState, MouseEvent, ChangeEvent } from 'react'
-import { Input, Button, FormControl, InputLabel, InputAdornment, IconButton } from '@material-ui/core'
+import { Input, Button, FormControl, InputLabel, InputAdornment, IconButton, Typography } from '@material-ui/core'
 import {Link} from 'react-router-dom'
 import Visibility from '@material-ui/icons/Visibility'
 import VisibilityOff from '@material-ui/icons/VisibilityOff'
 import { makeStyles } from '@material-ui/styles'
+import userRequests from '../../api'
 import crumbledPaper from '../../images/crumbledPaper.jpg'
+import { updateShorthandPropertyAssignment } from 'typescript'
 
 const useStyles = makeStyles(() => ({
     loginContainer: {
@@ -36,8 +38,13 @@ const LoginModal: FC<LoginModalProps> = ({setModalMode}) => {
     password: '',
     showPassword: false
     })
+  const [data, setData] = useState()
   
-    const handleChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
+  const login = () => {
+    userRequests.login({username: values.username, password: values.password}).then((res) => setData(res.data))
+  }
+  
+  const handleChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [prop]: event.target.value });
   };
 
@@ -86,7 +93,8 @@ const LoginModal: FC<LoginModalProps> = ({setModalMode}) => {
             }
         />
       </FormControl>
-      <Button>Войти</Button>
+      <Typography style={{ "color": "red" }}>{data}</Typography>
+      <Button onClick={login}>Войти</Button>
       <Button onClick={() => setModalMode("register")}>Уже есть аккаунт?</Button>
     </div>
   )
