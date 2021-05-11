@@ -4,7 +4,7 @@ import {Grid, Typography} from '@material-ui/core'
 import {Link} from 'react-router-dom'
 import headerImage from "../../images/headerImage.jpg"
 import fadedHeaderImage from "../../images/fadedHeaderImage.jpg"
-// import AccountModal from '../AccountModal'
+import AccountModal from '../AccountModal'
 
 const useStyles = makeStyles(() => ({
   blurImage: {
@@ -171,7 +171,7 @@ const Header: FC = () => {
             <Link to="/">все форумы</Link>
           </li>
           <li>
-            {/* <AccountModal /> */}
+            <AccountModal />
           </li>
           <li>
             <Link to="/">Легенды</Link>
