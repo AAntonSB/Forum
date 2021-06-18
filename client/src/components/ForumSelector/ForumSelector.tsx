@@ -1,9 +1,10 @@
 import React, {FC, useState, useEffect} from 'react'
 import { makeStyles } from '@material-ui/styles'
-import { Typography, List, ListItem, CircularProgress } from '@material-ui/core'
+import { Typography, List, ListItem, CircularProgress, IconButton, Grid } from '@material-ui/core'
 import crumbledPaper from '../../images/crumbledPaper.jpg'
 import { useHistory } from "react-router-dom"
 import { SubForum, FetchPayload } from '../../types/Mongo/types'
+import eraser from '../../images/eraser.png'
 import { subForumRequests } from '../../api'
 import clsx from 'clsx'
 import _ from 'lodash'
@@ -16,6 +17,9 @@ const useStyles = makeStyles(() => ({
   },
   listItem: {
     width: "60vw",
+    display: "grid",
+    gridTemplateColumns: "33% 34% 33%",
+    boxShadow: "rgba(0, 0, 0, 0.05) 0px 1px 2px 0px"
   },
   evenItem: {
     backgroundColor: "#9980FA",
@@ -28,6 +32,16 @@ const useStyles = makeStyles(() => ({
     "&:hover": {
     backgroundColor: "#5153ad !important",
     }
+  },
+  deleteButton: {
+    height: "30px",
+    width: "auto",
+    cursor: "pointer",
+    placeSelf: "end",
+    "&hover": {
+      boxShadow: "5px 5px 3px 3px rgba(0, 0, 0, 0.3)"
+    },
+    zIndex: 500,
   }
 }))
 
@@ -60,13 +74,15 @@ const ForumSelector: FC = () => {
     <div className={classes.selectorContainer}>
       <Typography variant="h2">Sub-forums</Typography>
       <List>
-      {_.map(subForums, (testItem, index) => (
+      {_.map(subForums, (subForum, index) => (
         <ListItem className={clsx(classes.listItem)}
           button
-          onClick={() => history.push(`/Board/${testItem.id}`)}
+          onClick={() => history.push(`/Board/${subForum.id}`)}
+          key={index}
         >
-          <Typography variant="h4" align="left" style={{ "minWidth": "200px"}}>{testItem.title}</Typography>
-          {/* <Typography variant="h6" align="center">{testItem.comment}</Typography> */}
+          <Typography variant="h4" align="left" style={{ "minWidth": "200px"}}>{subForum.title}</Typography>
+          <Typography variant="h6" align="center">{subForum.description}</Typography>
+            <img src={eraser} className={classes.deleteButton} />
         </ListItem>
       ))}
       </List>

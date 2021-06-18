@@ -9,6 +9,7 @@ const SubForum = new Schema(
       default: genUUID(),
     },
     title: { type: String, required: true },
+    description: { type: String, required: true },
     posts: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "Post",

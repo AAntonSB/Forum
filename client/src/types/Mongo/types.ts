@@ -17,6 +17,7 @@ export interface optionalId {
 export interface SubForum {
   id: string;
   title: string;
+  description: String;
   posts: string[];
 }
 
