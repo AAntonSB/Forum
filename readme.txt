@@ -1,0 +1,1 @@
+To install and launch do a npm install in both /client and /server and then a npm start in both.
