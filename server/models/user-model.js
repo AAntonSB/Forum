@@ -8,7 +8,7 @@ const User = new Schema(
       type: String,
       default: genUUID(),
     },
-    username: { type: String, required: true },
+    email: { type: String, required: true },
     password: { type: String, required: true },
     salt: {
       type: String,

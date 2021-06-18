@@ -49,7 +49,7 @@ const UserList: FC = () => {
     <div>
       {_.map(data.data, (user, index) => (
         <Accordion key={index}>
-          <AccordionSummary> {user.username} </AccordionSummary>
+          <AccordionSummary> {user.email} </AccordionSummary>
             <AccordionDetails>
               {/* <List>
                 {_.map(user.role.access, (acess) => (

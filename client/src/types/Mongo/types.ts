@@ -1,11 +1,11 @@
 export interface User {
-  username: string;
+  email: string;
   password: string;
 }
 
 export interface UserPayload {
   id: string;
-  username: string;
+  email: string;
   password: string;
   salt: string;
 }

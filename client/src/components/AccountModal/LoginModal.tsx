@@ -1,13 +1,10 @@
-import React, { FC, useState, MouseEvent, ChangeEvent, VoidFunctionComponent } from 'react'
-import { Input, Button, FormControl, InputLabel, InputAdornment, IconButton, Typography } from '@material-ui/core'
-import {Link} from 'react-router-dom'
-import Visibility from '@material-ui/icons/Visibility'
-import VisibilityOff from '@material-ui/icons/VisibilityOff'
+import React, { FC, useState, useCallback, useMemo, MouseEvent } from 'react'
+import { TextField, Button, IconButton, InputAdornment } from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
 import userRequests from '../../api'
 import crumbledPaper from '../../images/crumbledPaper.jpg'
-import { updateShorthandPropertyAssignment } from 'typescript'
-import { SettingsInputComponentTwoTone } from '@material-ui/icons'
+import { useFormik } from "formik"
+import * as yup from "yup"
 
 const useStyles = makeStyles(() => ({
     loginContainer: {
@@ -22,12 +19,6 @@ const useStyles = makeStyles(() => ({
   }
 }))
 
-interface State {
-  username: string;
-  password: string;
-  showPassword: boolean;
-}
-
 interface LoginModalProps {
   setModalMode: (mode: string) => void;
   setOpen: (open: boolean) => void;
@@ -35,73 +26,67 @@ interface LoginModalProps {
 
 const LoginModal: FC<LoginModalProps> = ({setModalMode, setOpen}) => {
   const classes = useStyles()
-    const [values, setValues] = useState<State>({
-    username: '',
-    password: '',
-    showPassword: false
-    })
   const [data, setData] = useState()
-  
-  const login = () => {
-    userRequests.login({username: values.username, password: values.password}).then((res) => setData(res.data))
-  }
-  
-  const handleChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
-    setValues({ ...values, [prop]: event.target.value });
-  };
+  const [showPassword, setShowPassword] = useState<boolean>(false)
 
-    const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword });
-  };
+    const validationSchema = useMemo(
+    () =>
+      yup.object().shape({
+        email: yup.string().email().required(),
+        password: yup.string().required()
+      }),
+    []
+  )
 
-    const handleMouseDownPassword = (event: MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-  };
+  const initialValues = useMemo(
+    () => ({
+      email: "",
+      password: "",
+      confirmPassword: ""
+    }),
+    []
+  )
+
+  const onSubmit = useCallback((values) => {
+    userRequests.login({email: values.email, password: values.password}).then((res) => setData(res.data))
+  }, [])
+
+  const formik = useFormik({
+    initialValues,
+    validationSchema,
+    onSubmit,
+  })
 
   if (data === "Succesfully authenticated") {
     setOpen(false)
   }
 
   return (
-    <div className={classes.loginContainer}>
-      <h1>Войти</h1>
-      <FormControl>
-        <InputLabel htmlFor="username">Имя пользователя</InputLabel>
-        <Input
-          required
-          id="username"
-          type="username"
-          value={values.username}
-          onChange={handleChange('username')}
-          aria-describedby="username"
-          inputProps={{
-            'aria-label': 'username'
-          }}
+    <div >
+      <form className={classes.loginContainer} onSubmit={formik.handleSubmit}>
+      <h1>Login</h1>
+        <TextField
+          id="email"
+          name="email"
+          label="Email"
+          value={formik.values.email}
+          onChange={formik.handleChange}
+          error={formik.touched.email && Boolean(formik.errors.email)}
+          helperText={formik.touched.email && formik.errors.email}
         />
-      </FormControl>
-      <FormControl>
-      <InputLabel htmlFor="password">Пароль</InputLabel>
-        <Input
+        <TextField
           id="password"
-                    type={values.showPassword ? 'text' : 'password'}
-            value={values.password}
-            onChange={handleChange('password')}
-                    endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
-                >
-                  {values.showPassword ? <Visibility /> : <VisibilityOff />}
-                </IconButton>
-              </InputAdornment>
-            }
+          name="password"
+          label="Password"
+          type="password"
+          value={formik.values.password}
+          onChange={formik.handleChange}
+          error={formik.touched.password && Boolean(formik.errors.password)}
+          helperText={formik.touched.password && formik.errors.password}
         />
-      </FormControl>
-      <Typography style={{ "color": "red" }}>{data}</Typography>
-      <Button onClick={login}>Войти</Button>
-      <Button onClick={() => setModalMode("register")}>Уже есть аккаунт?</Button>
+      <Button type="submit">Login</Button>
+      <Button onClick={() => setModalMode("register")}>Don't have an account?</Button>
+      </form>
     </div>
   )
 }

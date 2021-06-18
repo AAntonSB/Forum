@@ -1,11 +1,10 @@
-import React, { FC, useState, MouseEvent, ChangeEvent } from 'react'
-import { Input, FormControl, InputLabel, InputAdornment, IconButton, Button } from '@material-ui/core'
-import {Link} from 'react-router-dom'
-import Visibility from '@material-ui/icons/Visibility'
-import VisibilityOff from '@material-ui/icons/VisibilityOff'
+import React, { FC, useMemo, useCallback } from 'react'
+import { TextField, Button } from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
 import userRequests from '../../api'
 import crumbledPaper from '../../images/crumbledPaper.jpg'
+import {useFormik} from "formik"
+import * as yup from "yup"
 
 const useStyles = makeStyles(() => ({
   registerContainer: {
@@ -45,98 +44,77 @@ interface RegisterModalProps {
 
 const RegisterModal: FC<RegisterModalProps> = ({setModalMode}) => {
   const classes = useStyles()
-  const [values, setValues] = useState<State>({
-    username: '',
-    password: '',
-    confirmPassword: '',
-    email: "",
-    showPassword: false
+
+
+    const validationSchema = useMemo(
+    () =>
+      yup.object().shape({
+        email: yup.string().email().required("Please enter an email adress."),
+        password: yup.string().required("Please enter a password.").matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+        "Requires at Least 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character"),
+        confirmPassword: yup.string()
+    .required("Please confirm your password.")
+    .oneOf([yup.ref("password"), null], "Passwords don't match")
+      }),
+    []
+  )
+
+  const initialValues = useMemo(
+    () => ({
+      email: "",
+      password: "",
+      confirmPassword: ""
+    }),
+    []
+  )
+
+  const onSubmit = useCallback((values) => {
+        userRequests.register({email: values.email, password: values.password}).then((res) => console.log(res))
+  }, [])
+
+  const formik = useFormik({
+    initialValues,
+    validationSchema,
+    onSubmit,
   })
-
-  const register = () => {
-    userRequests.register({username: values.username, password: values.password}).then((res) => console.log(res))
-  }
-
-  const handleChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
-    setValues({ ...values, [prop]: event.target.value });
-  };
-
-    const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword });
-  };
-
-    const handleMouseDownPassword = (event: MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-  };
   
   return (
-    <div className={classes.registerContainer}>
-      <h1>Зарегистрироваться</h1>
-      <FormControl>
-        <InputLabel htmlFor="username">Имя пользователя</InputLabel>
-        <Input
-          required
-          id="username"
-          type="username"
-          value={values.username}
-          onChange={handleChange('username')}
-          aria-describedby="username"
-          inputProps={{
-            'aria-label': 'username'
-          }}
-        />
-      </FormControl>
-      <FormControl>
-        <InputLabel htmlFor="email">Электронное письмо</InputLabel>
-        <Input
+    <div >
+      <form className={classes.registerContainer} onSubmit={formik.handleSubmit}>
+      <h1>Register</h1>
+        <TextField
           id="email"
-          type="email"
+          name="email"
+          label="Email"
+          value={formik.values.email}
+          onChange={formik.handleChange}
+          error={formik.touched.email && Boolean(formik.errors.email)}
+          helperText={formik.touched.email && formik.errors.email}
         />
-      </FormControl>
-      <FormControl>
-        <InputLabel htmlFor="password">Пароль</InputLabel>
-        <Input
+        <TextField
           id="password"
-                    type={values.showPassword ? 'text' : 'password'}
-            value={values.password}
-            onChange={handleChange('password')}
-                    endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
-                >
-                  {values.showPassword ? <Visibility /> : <VisibilityOff />}
-                </IconButton>
-              </InputAdornment>
-            }
+          name="password"
+          label="Password"
+          type="password"
+          value={formik.values.password}
+          onChange={formik.handleChange}
+          error={formik.touched.password && Boolean(formik.errors.password)}
+          helperText={formik.touched.password && formik.errors.password}
         />
-      </FormControl>
-      <FormControl>
-        <InputLabel htmlFor="confirm-password">Подтвердить пароль</InputLabel>
-        <Input
-                  id="confirm-password"
-                    type={values.showPassword ? 'text' : 'password'}
-            value={values.confirmPassword}
-            onChange={handleChange('confirmPassword')}
-                    endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
-                >
-                  {values.showPassword ? <Visibility /> : <VisibilityOff />}
-                </IconButton>
-              </InputAdornment>
-            }/>
-      </FormControl>
-      <div  className={classes.loginPage}>
-        <Button onClick={() => register()} className={classes.registerMenuButton}>регистр</Button>
-        <Button onClick={ () => setModalMode("login")} className={classes.registerMenuLink}>Войти</Button>
+          <TextField
+          id="confirmPassword"
+          name="confirmPassword"
+          label="Confirm password"
+          type="password"
+          value={formik.values.confirmPassword}
+          onChange={formik.handleChange}
+          error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
+          helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
+        />
+        <Button type="submit">Register</Button>
+        <Button onClick={ () => setModalMode("login")} className={classes.registerMenuLink}>Already have an account?</Button>
+      </form>
       </div>
-    </div>
   )
 }
 

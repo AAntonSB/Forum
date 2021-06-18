@@ -17,13 +17,19 @@ module.exports = {
         error: "You must provide a user",
       });
     }
-
+    const emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+    if (!emailRegex.test(body.email)) {
+      return res.status(440).json({
+        sucess: false,
+        error: "You must submit a properly formatted email adress.",
+      });
+    }
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(body.password, salt);
     body.salt = salt;
     body.password = hashedPassword;
 
-    User.findOne({ username: body.username }, (err, doc) => {
+    User.findOne({ email: body.email }, (err, doc) => {
       if (err) throw err;
       if (doc) return res.send("user already exists");
 

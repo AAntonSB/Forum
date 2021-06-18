@@ -1,1 +1,1 @@
-export {default} from './AccountModal.tsx'
+export {default} from './AccountModal'

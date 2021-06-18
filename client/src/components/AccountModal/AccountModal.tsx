@@ -3,7 +3,6 @@ import {makeStyles} from '@material-ui/styles'
 import { Backdrop, Button } from '@material-ui/core'
 import LoginModal from './LoginModal'
 import RegisterModal from './RegisterModal'
-import classes from '*.module.css'
 
 const useStyles = makeStyles(() => ({
   backdrop: {
