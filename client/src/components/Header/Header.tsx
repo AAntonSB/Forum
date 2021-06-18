@@ -169,13 +169,13 @@ const Header: FC = () => {
       <nav role='navigation' className={classes.navigationMenu}>
         <ul>
           <li>
-            <Link to="/">все форумы</Link>
+            <Link to="/">To boards</Link>
           </li>
           <li>
-            <AccountModal />
+            <AccountModal title="Login/Register"/>
           </li>
           <li>
-            <Link to="/">Легенды</Link>
+            <Link to="/HoF">HoF</Link>
           </li>
         </ul>
       </nav>

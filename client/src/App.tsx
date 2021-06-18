@@ -18,9 +18,9 @@ const App: FC = () => {
       <Header />
       <Switch>
         <Route exact path="/"> <ForumSelector /> </Route>
-        <Route exact path="/советов/:name"> <Board /> </Route>
-        <Route path="/советов/:name/:id"><Post /></Route>
-        <Route path="/списокпользователей"><UserList /></Route>
+        <Route exact path="/Board/:name"> <Board /> </Route>
+        <Route path="/Post/:name/:id"><Post /></Route>
+        <Route path="/UserList"><UserList /></Route>
       </Switch>
       <div style={{width: "100%", height: "35vh", backgroundColor: "rgb(186,85,211)"}}/>
     </div>

@@ -33,7 +33,7 @@ const useStyles = makeStyles(() => ({
 }))
 
 
-const AccountModal: FC = () => {
+const AccountModal: FC<{title: string}> = ({title}) => {
   const classes = useStyles();
   const [open, setOpen] = useState<boolean>(false)
   const [modalMode, setModalMode] = useState<string>("login")
@@ -47,7 +47,7 @@ const AccountModal: FC = () => {
             <RegisterModal setModalMode={setModalMode}/> }
         </div>
       </Backdrop>
-      <Button className={classes.button} onClick={() => setOpen(true)}>регистр</Button>
+      <Button className={classes.button} onClick={() => setOpen(true)}>{ title }</Button>
     </>
   )
 }

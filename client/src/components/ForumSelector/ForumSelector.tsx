@@ -41,7 +41,7 @@ const ForumSelector: FC = () => {
 
   return (
     <div className={classes.selectorContainer}>
-      <Typography variant="h1">советов</Typography>
+      <Typography variant="h2">Sub-forums</Typography>
       <List>
       {_.map(testList, (testItem, index) => (
         <ListItem className={clsx(classes.listItem)}
