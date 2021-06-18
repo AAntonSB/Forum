@@ -13,3 +13,14 @@ export interface UserPayload {
 export interface optionalId {
   id: string | undefined;
 }
+
+export interface SubForum {
+  id: string;
+  title: string;
+  posts: string[];
+}
+
+export interface FetchPayload {
+  error: boolean;
+  loading: boolean;
+}

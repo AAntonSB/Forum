@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {User, optionalId, UserPayload} from '../types/Mongo/types'
+import {User, UserPayload, SubForum} from '../types/Mongo/types'
 
 const api = axios.create({
   withCredentials: true,
@@ -15,4 +15,9 @@ const userRequests = {
   loggedInUser: () => api.get("user")
 }
 
-export default userRequests
+const subForumRequests = {
+  create: (payload: SubForum) => api.post("/sub-forum", payload),
+  getAll: () => api.get("/sub-forums")
+}
+
+export {userRequests, subForumRequests}

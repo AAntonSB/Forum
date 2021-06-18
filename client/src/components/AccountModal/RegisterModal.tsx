@@ -1,7 +1,7 @@
 import React, { FC, useMemo, useCallback } from 'react'
 import { TextField, Button } from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
-import userRequests from '../../api'
+import { userRequests } from '../../api'
 import crumbledPaper from '../../images/crumbledPaper.jpg'
 import {useFormik} from "formik"
 import * as yup from "yup"

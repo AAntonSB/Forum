@@ -1,25 +1,18 @@
 import React, { FC, useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/styles'
 import { Accordion, AccordionSummary, AccordionDetails, List, ListItem, CircularProgress } from '@material-ui/core'
-import { UserPayload } from '../../types/Mongo/types'
+import { UserPayload, FetchPayload } from '../../types/Mongo/types'
 import {useHistory} from 'react-router-dom'
-import userRequests from '../../api'
+import {userRequests} from '../../api'
 import _ from 'lodash'
-import { isConstructorDeclaration } from 'typescript'
 
 const useStyles = makeStyles(() => ({
 }))
 
-interface fetchPayload {
-  error: boolean;
-  loading: boolean;
-}
-
 const UserList: FC = () => {
   // const classes = useStyles();
   const [data, setData] = useState<{ success: boolean, data: UserPayload[] }>()
-  const [get, setGet] = useState<fetchPayload>({ error: false, loading: true })
-  const [user, setUser] = useState(null)
+  const [get, setGet] = useState<FetchPayload>({ error: false, loading: true })
   const history = useHistory()
 
   useEffect(() => {
