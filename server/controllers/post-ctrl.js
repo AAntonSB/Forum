@@ -1,8 +1,10 @@
+const mongoose = require("mongoose");
 const Post = require("../models/post-model");
+const SubForum = require("../models/sub-forum-model");
 const User = require("../models/user-model");
 
 module.exports = {
-  getSubForums: async function (req, res) {
+  getPosts: async function (req, res) {
     await Post.find({}, (err, post) => {
       if (err) {
         return res.status(400).json({ success: false, error: err });
@@ -16,7 +18,7 @@ module.exports = {
     }).catch((err) => console.log(err));
   },
 
-  addSubForum: async function (req, res) {
+  createPost: async function (req, res) {
     const body = req.body;
 
     if (!body) {
@@ -28,7 +30,12 @@ module.exports = {
 
     User.findOne({ id: body.user }, (err, doc) => {
       if (err) throw err;
-      if (doc) return res.send("You must be logged in to post");
+      if (!doc) return res.send("You must be logged in to post");
+    });
+
+    SubForum.findOne({ id: body.subForum }, (err, doc) => {
+      if (err) throw err;
+      if (!doc) return res.send("You must be logged in to post");
     });
 
     Post.findOne({ title: body.title }, (err, doc) => {
@@ -37,7 +44,7 @@ module.exports = {
 
       console.log(body);
 
-      const post = new SubForum(body);
+      const post = new Post(body);
 
       if (!post) {
         return res.status(400).json({ success: false, error: err });

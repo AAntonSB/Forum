@@ -25,3 +25,9 @@ export interface FetchPayload {
   error: boolean;
   loading: boolean;
 }
+
+export interface Post {
+  title: string;
+  text: string;
+  user: string;
+}

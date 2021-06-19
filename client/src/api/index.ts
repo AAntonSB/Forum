@@ -1,12 +1,12 @@
 import axios from 'axios'
-import {User, UserPayload, SubForum} from '../types/Mongo/types'
+import {User, UserPayload, SubForum, Post} from '../types/Mongo/types'
 
 const api = axios.create({
   withCredentials: true,
   baseURL: "http://localhost:3000/api"
 })
 
-const userRequests = { 
+export const userRequests = { 
   register: (payload: User) => api.post("/register", payload),
   login: (payload: User) => api.post("/login", payload),
   get: (id: string) => api.get<UserPayload>(`/user/${id}`),
@@ -15,9 +15,11 @@ const userRequests = {
   loggedInUser: () => api.get("user")
 }
 
-const subForumRequests = {
+export const subForumRequests = {
   create: (payload: SubForum) => api.post("/sub-forum", payload),
   getAll: () => api.get("/sub-forums")
 }
 
-export {userRequests, subForumRequests}
+export const postRequests = {
+  create: (payload: Post) => api.post("/post", payload),
+}

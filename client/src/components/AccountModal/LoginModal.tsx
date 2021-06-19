@@ -36,7 +36,7 @@ const LoginModal: FC<LoginModalProps> = ({setModalMode, setOpen}) => {
         password: yup.string().required()
       }),
     []
-  )
+    )
 
   const initialValues = useMemo(
     () => ({

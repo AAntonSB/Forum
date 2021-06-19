@@ -19,4 +19,4 @@ const SubForum = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("subForums", SubForum);
+module.exports = mongoose.model("SubForum", SubForum);

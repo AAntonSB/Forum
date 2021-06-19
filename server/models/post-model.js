@@ -11,17 +11,20 @@ const Post = new Schema(
     title: { type: String },
     text: { type: String },
     replys: {
-      type: [mongoose.Schema.Types.ObjectId],
+      type: [String],
       ref: "Reply",
       default: [],
     },
     user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
+      type: String,
+      required: true,
+    },
+    subForum: {
+      type: String,
       required: true,
     },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("posts", Post);
+module.exports = mongoose.model("Post", Post);

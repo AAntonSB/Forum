@@ -77,7 +77,7 @@ const ForumSelector: FC = () => {
       {_.map(subForums, (subForum, index) => (
         <ListItem className={clsx(classes.listItem)}
           button
-          onClick={() => history.push(`/Board/${subForum.id}`)}
+          onClick={() => history.push(`/Board/${subForum.title}`)}
           key={index}
         >
           <Typography variant="h4" align="left" style={{ "minWidth": "200px"}}>{subForum.title}</Typography>

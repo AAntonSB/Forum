@@ -4,6 +4,7 @@ import { Typography, Button } from '@material-ui/core'
 import { useParams, useHistory } from 'react-router-dom'
 import clsx from 'clsx'
 import _ from 'lodash'
+import CreatePostModal from './CreatePostModal'
 
 const useStyles = makeStyles(() => ({
   headerContainer: {
@@ -25,8 +26,8 @@ const BoardHeader: FC<BoardHeaderProps> = ({name}) => {
   return (
     <div className={classes.headerContainer}>
       <div/>
-      <Typography variant="h3" align="left">Добро пожаловать в {name}</Typography>
-      <Button variant="contained" color="primary" size="small">создать сообщение</Button>
+      <Typography variant="h3" align="left">{name}</Typography>
+      <CreatePostModal/>
     </div>
   )
 }
