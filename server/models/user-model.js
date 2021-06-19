@@ -10,6 +10,11 @@ const User = new Schema(
     },
     email: { type: String, required: true },
     password: { type: String, required: true },
+    role: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Role",
+      default: null,
+    },
     salt: {
       type: String,
       default: genUUID(),

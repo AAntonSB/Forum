@@ -10,6 +10,16 @@ const Post = new Schema(
     },
     title: { type: String },
     text: { type: String },
+    replys: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Reply",
+      default: [],
+    },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
+      required: true,
+    },
   },
   { timestamps: true }
 );
