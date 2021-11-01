@@ -1,14 +1,15 @@
 const mongoose = require("mongoose");
+const url = process.env.MONGO_DB_CONNECTION_STRING;
 
-mongoose
-  .connect("mongodb://127.0.0.1:27017/forum", {
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
+const connect = mongoose.connect(url, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true,
+});
+connect
+  .then((db) => {
+    console.log("connected to db");
   })
-  .catch((e) => {
-    console.error("Connection error", e.message);
+  .catch((err) => {
+    console.log(err);
   });
-
-const db = mongoose.connection;
-
-module.exports = db;
