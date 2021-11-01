@@ -1,10 +1,9 @@
 import React, {FC, useState, useEffect} from 'react'
 import { makeStyles } from '@material-ui/styles'
-import { Typography, List, ListItem, CircularProgress, IconButton, Grid } from '@material-ui/core'
+import { Typography, List, ListItem, CircularProgress } from '@material-ui/core'
 import crumbledPaper from '../../images/crumbledPaper.jpg'
 import { useHistory } from "react-router-dom"
 import { SubForum, FetchPayload } from '../../types/Mongo/types'
-import eraser from '../../images/eraser.png'
 import { subForumRequests } from '../../api'
 import clsx from 'clsx'
 import _ from 'lodash'
@@ -33,22 +32,12 @@ const useStyles = makeStyles(() => ({
     backgroundColor: "#5153ad !important",
     }
   },
-  deleteButton: {
-    height: "30px",
-    width: "auto",
-    cursor: "pointer",
-    placeSelf: "end",
-    "&hover": {
-      boxShadow: "5px 5px 3px 3px rgba(0, 0, 0, 0.3)"
-    },
-    zIndex: 500,
-  }
 }))
 
 const ForumSelector: FC = () => {
   const classes = useStyles();
   const history = useHistory();
-  const [data, setData] = useState<{ success: boolean, data: SubForum[] }>();
+  const [data, setData] = useState<{ success: boolean, data: any }>();
   const [get, setGet] = useState<FetchPayload>({ error: false, loading: true })
 
     useEffect(() => {
@@ -77,12 +66,11 @@ const ForumSelector: FC = () => {
       {_.map(subForums, (subForum, index) => (
         <ListItem className={clsx(classes.listItem)}
           button
-          onClick={() => history.push(`/Board/${subForum.title}`)}
+          onClick={() => history.push(`/board/${subForum.title}`)}
           key={index}
         >
           <Typography variant="h4" align="left" style={{ "minWidth": "200px"}}>{subForum.title}</Typography>
           <Typography variant="h6" align="center">{subForum.description}</Typography>
-            <img src={eraser} className={classes.deleteButton} />
         </ListItem>
       ))}
       </List>
