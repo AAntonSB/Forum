@@ -5,6 +5,8 @@ import { userRequests } from '../../api'
 import crumbledPaper from '../../images/crumbledPaper.jpg'
 import {useFormik} from "formik"
 import * as yup from "yup"
+import { useUserContext } from '../../contexts/UserContext'
+
 
 const useStyles = makeStyles(() => ({
   registerContainer: {
@@ -44,23 +46,25 @@ interface RegisterModalProps {
 
 const RegisterModal: FC<RegisterModalProps> = ({setModalMode}) => {
   const classes = useStyles()
-
+  const { setToken } = useUserContext()
 
     const validationSchema = useMemo(
     () =>
-      yup.object().shape({
+        yup.object().shape({
+        username: yup.string().required("Please enter a unique username"),
         email: yup.string().email().required("Please enter an email adress."),
         password: yup.string().required("Please enter a password.").matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
         "Requires at Least 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character"),
         confirmPassword: yup.string()
-    .required("Please confirm your password.")
-    .oneOf([yup.ref("password"), null], "Passwords don't match")
+        .required("Please confirm your password.")
+        .oneOf([yup.ref("password"), null], "Passwords don't match")
       }),
     []
   )
 
   const initialValues = useMemo(
     () => ({
+      username: "",
       email: "",
       password: "",
       confirmPassword: ""
@@ -69,7 +73,11 @@ const RegisterModal: FC<RegisterModalProps> = ({setModalMode}) => {
   )
 
   const onSubmit = useCallback((values) => {
-        userRequests.register({email: values.email, password: values.password}).then((res) => console.log(res))
+    userRequests.signup({ username: values.username, password: values.password, email: values.email }).then((res) => {
+      setToken(res.data.token)
+      localStorage.setItem("token", res.data.token)
+    })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const formik = useFormik({
@@ -81,10 +89,21 @@ const RegisterModal: FC<RegisterModalProps> = ({setModalMode}) => {
   return (
     <div >
       <form className={classes.registerContainer} onSubmit={formik.handleSubmit}>
-      <h1>Register</h1>
+        <h1>Register</h1>
+          <TextField
+          id="username"
+          name="username"
+          autoComplete="username"
+          label="Username"
+          value={formik.values.username}
+          onChange={formik.handleChange}
+          error={formik.touched.username && Boolean(formik.errors.username)}
+          helperText={formik.touched.username && formik.errors.username}
+        />
         <TextField
           id="email"
           name="email"
+          autoComplete="email"
           label="Email"
           value={formik.values.email}
           onChange={formik.handleChange}
@@ -94,6 +113,7 @@ const RegisterModal: FC<RegisterModalProps> = ({setModalMode}) => {
         <TextField
           id="password"
           name="password"
+          autoComplete="new-password"
           label="Password"
           type="password"
           value={formik.values.password}

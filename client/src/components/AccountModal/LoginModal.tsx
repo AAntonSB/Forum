@@ -1,10 +1,11 @@
-import React, { FC, useState, useCallback, useMemo, MouseEvent } from 'react'
-import { TextField, Button, IconButton, InputAdornment } from '@material-ui/core'
+import React, { FC, useState, useCallback, useMemo } from 'react'
+import { TextField, Button } from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
 import { userRequests } from '../../api'
 import crumbledPaper from '../../images/crumbledPaper.jpg'
 import { useFormik } from "formik"
 import * as yup from "yup"
+import { useUserContext } from '../../contexts/UserContext'
 
 const useStyles = makeStyles(() => ({
     loginContainer: {
@@ -27,12 +28,12 @@ interface LoginModalProps {
 const LoginModal: FC<LoginModalProps> = ({setModalMode, setOpen}) => {
   const classes = useStyles()
   const [data, setData] = useState()
-  const [showPassword, setShowPassword] = useState<boolean>(false)
+  const { setToken } = useUserContext()
 
     const validationSchema = useMemo(
     () =>
       yup.object().shape({
-        email: yup.string().email().required(),
+        username: yup.string().required(),
         password: yup.string().required()
       }),
     []
@@ -40,15 +41,20 @@ const LoginModal: FC<LoginModalProps> = ({setModalMode, setOpen}) => {
 
   const initialValues = useMemo(
     () => ({
-      email: "",
+      username: "",
       password: "",
-      confirmPassword: ""
     }),
     []
   )
 
   const onSubmit = useCallback((values) => {
-    userRequests.login({email: values.email, password: values.password}).then((res) => setData(res.data))
+    userRequests.login({ username: values.username, password: values.password }).then((res) => {
+      setToken(res.data.token)
+      setData(res.data.success)
+      localStorage.setItem("token", res.data.token)
+    })
+    
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const formik = useFormik({
@@ -57,7 +63,7 @@ const LoginModal: FC<LoginModalProps> = ({setModalMode, setOpen}) => {
     onSubmit,
   })
 
-  if (data === "Succesfully authenticated") {
+  if (data) {
     setOpen(false)
   }
 
@@ -66,17 +72,19 @@ const LoginModal: FC<LoginModalProps> = ({setModalMode, setOpen}) => {
       <form className={classes.loginContainer} onSubmit={formik.handleSubmit}>
       <h1>Login</h1>
         <TextField
-          id="email"
-          name="email"
-          label="Email"
-          value={formik.values.email}
+          id="username"
+          name="username"
+          autoComplete="username"
+          label="Username"
+          value={formik.values.username}
           onChange={formik.handleChange}
-          error={formik.touched.email && Boolean(formik.errors.email)}
-          helperText={formik.touched.email && formik.errors.email}
+          error={formik.touched.username && Boolean(formik.errors.username)}
+          helperText={formik.touched.username && formik.errors.username}
         />
         <TextField
           id="password"
           name="password"
+          autoComplete="current-password"
           label="Password"
           type="password"
           value={formik.values.password}

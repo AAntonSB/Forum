@@ -3,6 +3,9 @@ import {makeStyles} from '@material-ui/styles'
 import { Backdrop, Button } from '@material-ui/core'
 import LoginModal from './LoginModal'
 import RegisterModal from './RegisterModal'
+import { userRequests } from '../../api'
+import { useUserContext } from '../../contexts/UserContext'
+import { useHistory } from 'react-router-dom'
 
 const useStyles = makeStyles(() => ({
   backdrop: {
@@ -33,12 +36,16 @@ const useStyles = makeStyles(() => ({
 }))
 
 
-const AccountModal: FC<{title: string}> = ({title}) => {
+
+const AccountModal: FC = () => {
+  const { token, setToken } = useUserContext()
+  const history = useHistory();
+
   const classes = useStyles();
   const [open, setOpen] = useState<boolean>(false)
   const [modalMode, setModalMode] = useState<string>("login")
-  return (
-    <>
+  
+  return token === null ? (<>
       <Backdrop open={open} className={classes.backdrop}>
         <div className={classes.dissmissable} onClick={() => setOpen(false)} />
         <div className={classes.accountContainer}>
@@ -47,9 +54,20 @@ const AccountModal: FC<{title: string}> = ({title}) => {
             <RegisterModal setModalMode={setModalMode}/> }
         </div>
       </Backdrop>
-      <Button className={classes.button} onClick={() => setOpen(true)}>{ title }</Button>
-    </>
-  )
+      <Button className={classes.button} onClick={() => setOpen(true)}>Login/Register</Button>
+  </>)
+    : (<Button
+      className={classes.button}
+      onClick={() => userRequests.logout({ token: token, tokenName: "bearer" })
+        .then(res => {
+          localStorage.removeItem("token")
+          setToken(null)
+          history.push("/")
+        }).catch(er => {
+          setToken(null)
+          history.push("/")
+        })}
+    >Logout</Button>)
 }
 
 export default AccountModal
