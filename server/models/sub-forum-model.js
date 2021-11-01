@@ -4,14 +4,11 @@ const { genUUID } = require("../helperFunctions");
 
 const SubForum = new Schema(
   {
-    id: {
-      type: String,
-      default: genUUID(),
-    },
     title: { type: String, required: true },
-    description: { type: String, required: true },
+    description: { type: String },
+    locked: { type: Boolean },
     posts: {
-      type: [mongoose.Schema.Types.ObjectId],
+      type: [String],
       ref: "Post",
       default: [],
     },

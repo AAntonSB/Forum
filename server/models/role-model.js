@@ -1,13 +1,8 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const { genUUID } = require("../helperFunctions");
 
 const Role = new Schema(
   {
-    id: {
-      type: String,
-      default: genUUID(),
-    },
     name: {
       type: String,
       required: true,
@@ -16,8 +11,7 @@ const Role = new Schema(
       type: String,
     },
     subForumAccess: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: "subForum",
+      type: [String],
       default: [],
     },
   },

@@ -9,9 +9,13 @@ const Reply = new Schema(
       default: genUUID(),
     },
     text: { type: String },
+    warning: { type: Boolean },
     user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
+      type: String,
+      required: true,
+    },
+    post: {
+      type: String,
       required: true,
     },
   },

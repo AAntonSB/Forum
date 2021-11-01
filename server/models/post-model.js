@@ -4,15 +4,11 @@ const { genUUID } = require("../helperFunctions");
 
 const Post = new Schema(
   {
-    id: {
-      type: String,
-      default: genUUID(),
-    },
-    title: { type: String },
-    text: { type: String },
+    title: { type: String, required: true },
+    text: { type: String, required: true },
+    locked: { type: Boolean, required: true },
     replys: {
       type: [String],
-      ref: "Reply",
       default: [],
     },
     user: {

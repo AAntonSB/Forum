@@ -1,26 +1,47 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const { genUUID } = require("../helperFunctions");
+
+const passportLocalMongoose = require("passport-local-mongoose");
+
+const Session = new Schema({
+  refreshToken: {
+    type: String,
+    default: "",
+  },
+});
 
 const User = new Schema(
   {
-    id: {
+    authStrategy: {
       type: String,
-      default: genUUID(),
+      default: "local",
     },
-    email: { type: String, required: true },
-    password: { type: String, required: true },
+    email: {
+      type: String,
+      default: "",
+    },
+    comment: {
+      type: String,
+      default: "",
+    },
     role: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Role",
-      default: null,
-    },
-    salt: {
       type: String,
-      default: genUUID(),
+      default: "",
+    },
+    refreshToken: {
+      type: [Session],
     },
   },
   { timestamps: true }
 );
+
+User.set("toJSON", {
+  transform: function (doc, ret, options) {
+    delete ret.refreshToken;
+    return ret;
+  },
+});
+
+User.plugin(passportLocalMongoose);
 
 module.exports = mongoose.model("User", User);
