@@ -28,8 +28,6 @@ module.exports = {
       if (err) throw err;
       if (doc) return res.send("The sub forum already exists");
 
-      console.log(body);
-
       const subForum = new SubForum(body);
 
       if (!subForum) {

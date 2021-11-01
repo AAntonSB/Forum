@@ -3,60 +3,50 @@ const bcrypt = require("bcryptjs");
 const passport = require("passport");
 require("../passportConfig")(passport);
 
+const {
+  getToken,
+  COOKIE_OPTIONS,
+  getRefreshToken,
+} = require("../authenticate");
+
+
 module.exports = {
   loggedInUser: function (req, res) {
     res.send(req.user);
   },
 
   registerUser: async function (req, res) {
-    const body = req.body;
-
-    if (!body) {
-      return res.status(400).json({
-        sucess: false,
-        error: "You must provide a user",
+    if (!req.body.email) {
+      res.statusCode = 500;
+      res.send({
+        name: "EmailError",
+        message: "An Email is required",
       });
+    } else {
+      User.register(
+        new User({ username: req.body.username }),
+        req.body.password,
+        (err, user) => {
+          if (err) {
+            res.statusCode = 500;
+            res.send(err);
+          } else {
+            const token = getToken({ _id: user._id });
+            const refreshToken = getRefreshToken({ _id: user._id });
+            user.refreshToken.push({ refreshToken });
+            user.save((err, user) => {
+              if (err) {
+                res.statusCode = 500;
+                res.send(err);
+              } else {
+                res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS);
+                res.send({ success: true, token });
+              }
+            });
+          }
+        }
+      );
     }
-    const emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
-    if (!emailRegex.test(body.email)) {
-      return res.status(440).json({
-        sucess: false,
-        error: "You must submit a properly formatted email adress.",
-      });
-    }
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(body.password, salt);
-    body.salt = salt;
-    body.password = hashedPassword;
-
-    User.findOne({ email: body.email }, (err, doc) => {
-      if (err) throw err;
-      if (doc) return res.send("user already exists");
-
-      console.log(body);
-
-      const user = new User(body);
-
-      if (!user) {
-        return res.status(400).json({ success: false, error: err });
-      }
-
-      user
-        .save()
-        .then(() => {
-          return res.status(201).json({
-            sucess: true,
-            id: user.id,
-            message: "User created",
-          });
-        })
-        .catch((error) => {
-          return res.status(400).json({
-            error,
-            message: "User not created",
-          });
-        });
-    });
   },
 
   loginUser: function (req, res, next) {
