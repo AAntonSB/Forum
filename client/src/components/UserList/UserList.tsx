@@ -1,61 +1,88 @@
-import React, { FC, useState, useEffect } from 'react'
-import { makeStyles } from '@material-ui/styles'
-import { Accordion, AccordionSummary, AccordionDetails, List, ListItem, CircularProgress } from '@material-ui/core'
-import { UserPayload, FetchPayload } from '../../types/Mongo/types'
-import {useHistory} from 'react-router-dom'
-import {userRequests} from '../../api'
+import React, {useEffect, useState, useCallback} from 'react'
+import { List, CircularProgress, Typography } from '@material-ui/core'
+import { useUserContext } from '../../contexts/UserContext'
+import { useHistory } from 'react-router-dom'
+import { userRequests, roleRequests } from '../../api'
 import _ from 'lodash'
+import UserObject from './UserObject'
+import RoleCreator from '../RolePanel'
 
-const useStyles = makeStyles(() => ({
-}))
+interface User {
+  _id: string;
+  email: string;
+  username: string;
+  role: string;
+  createdAt: Date;
+  comment: string;
+}
 
-const UserList: FC = () => {
-  // const classes = useStyles();
-  const [data, setData] = useState<{ success: boolean, data: UserPayload[] }>()
-  const [get, setGet] = useState<FetchPayload>({ error: false, loading: true })
-  const history = useHistory()
+interface Role {
+  _id: string;
+  name: string;
+  subForumAccess: string[];
+}
+
+const UserList = () => {
+  const { token, setToken } = useUserContext()
+  const [roles, setRoles] = useState<Role[]>()
+  const [users, setUsers] = useState<User[]>()
+  const history = useHistory();
 
   useEffect(() => {
-    userRequests.loggedInUser().then(res => {
-      if (!res.data) {
-        history.push("/")
-      } else {
-            userRequests.getAll().then(response => {
-      setGet({ error: false, loading: false })
-      setData(response.data)
-    }).catch(err => {
-        setGet({error: true, loading: false})
+    if (token) {
+    const tokenObject = { token: token, tokenName: "bearer" }
+
+    userRequests.getAllUsers(tokenObject).then(res => {
+      setUsers(res.data.data)
     })
-      }
+    roleRequests.getAllFrom(tokenObject).then(res => {
+        setRoles(res.data.data)
     })
+    } else {
+      setToken(null)
+    history.push("/")
+  }
+  }, [token])
+
+  const fetchRoles = useCallback(() => {
+    if(token){
+    roleRequests.getAllFrom({ token: token, tokenName: "bearer" }).then(res => {
+        setRoles(res.data.data)
+    })}
   }, [])
-
-  if (get.loading || !data) {
-    return <CircularProgress />
+  
+    const fetchUsers = useCallback(() => {
+    if(token){
+    userRequests.getAllUsers({ token: token, tokenName: "bearer" }).then(res => {
+      setUsers(res.data.data)
+    })}
+  },[])
+  
+    if (!roles) {
+    return <CircularProgress/>
   }
 
-  if (get.error) {
-    return <div> an error has occured </div>
-  }
-
-  return (
-    <div>
-      {_.map(data.data, (user, index) => (
-        <Accordion key={index}>
-          <AccordionSummary> {user.email} </AccordionSummary>
-            <AccordionDetails>
-              {/* <List>
-                {_.map(user.role.access, (acess) => (
-                <ListItem>
-                  {acess.name}
-                </ListItem>
-                ))}
-              </List> */}
-            </AccordionDetails>
-          </Accordion>
-          ))}
-    </div>
-  )
+  return <>
+    <List style={{ textAlign: "center"}}>
+      <Typography variant="h1">Users</Typography>
+      <RoleCreator roles={roles} fetchRoles={fetchRoles} />
+      <div style={{display: "grid", justifyContent: "center"}}>
+      {_.map(users, (user, index) => (
+        <UserObject
+          email={user.email}
+          username={user.username}
+          role={user.role}
+          createdAt={user.createdAt}
+          comment={user.comment}
+          _id={user._id}
+          key={index}
+          roles={roles}
+          fetchUsers={fetchUsers}
+        />
+      ))}
+      </div>
+  </List>
+  </>
 }
 
 export default UserList
