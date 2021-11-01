@@ -12,7 +12,7 @@ const useStyles = makeStyles(() => ({
 
 const PostReply: FC = () => {
   const classes = useStyles();
-  const { name, id } = useParams<{ name: string, id: string }>();
+  
 
   return (
     <div>
