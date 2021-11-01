@@ -1,8 +1,6 @@
 import React, {FC} from 'react'
 import { makeStyles } from '@material-ui/styles'
-import { Typography, Button } from '@material-ui/core'
-import { useParams, useHistory } from 'react-router-dom'
-import clsx from 'clsx'
+import { Typography } from '@material-ui/core'
 import _ from 'lodash'
 import CreatePostModal from './CreatePostModal'
 
@@ -18,16 +16,17 @@ const useStyles = makeStyles(() => ({
 
 interface BoardHeaderProps {
   name: string;
+  refetchPosts: () => void
 }
 
-const BoardHeader: FC<BoardHeaderProps> = ({name}) => {
+const BoardHeader: FC<BoardHeaderProps> = ({name, refetchPosts}) => {
   const classes = useStyles()
 
   return (
     <div className={classes.headerContainer}>
       <div/>
       <Typography variant="h3" align="left">{name}</Typography>
-      <CreatePostModal/>
+      <CreatePostModal refetchPosts={refetchPosts} name={name} />
     </div>
   )
 }
