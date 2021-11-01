@@ -172,10 +172,10 @@ const Header: FC = () => {
             <Link to="/">To boards</Link>
           </li>
           <li>
-            <AccountModal title="Login/Register"/>
+            <AccountModal/>
           </li>
           <li>
-            <Link to="/HoF">HoF</Link>
+            <Link to="/user-list">Moderation</Link>
           </li>
         </ul>
       </nav>
